@@ -8,6 +8,7 @@ class Element {
         int _num;
         string _sym;
         string _name;
+        string _low;
     
     public:
         // constructors
@@ -17,10 +18,12 @@ class Element {
         int getNum();
         string getSym();
         string getName();
+        string getLow();
         // set
         void setNum(int);
         void setSym(string);
         void setName(string);
+        void setLow(string);
         // compare
         int compare(Element, string);
 };

@@ -4,21 +4,24 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <cstring>
 using std::cout;
 using std::endl;
 
-// array list has a size and a template pointer.
 template <typename T>
 class Array {
   private:
-    int _size;
-    T *_list;
+    int _size; // number of elements
+    T *_list; // template pointer
+    bool _beenMalloc; // has it been malloc?
   public:
     Array<T>();
+    ~Array<T>();
     void add(T);
     void insert(int, T);
-    void remove(int);
-    void replace(int, T);
+    T remove(int);
+    T pop();
+    T peek();
     T get(int);
     int size();
     void print();
@@ -28,21 +31,31 @@ class Array {
 template <typename T>
 Array<T>::Array() {
   _size = 0;
+  _beenMalloc = false;
+}
+
+// descructer
+template <typename T>
+Array<T>::~Array() {
+  if (_beenMalloc)
+    free(_list);
 }
 
 // increase the size of the array by one and put a val at the end
 template <typename T>
 void Array<T>::add(T val) {
   if (_size == 0) {
-    _list = (T*) malloc(sizeof(T));
-    _list = new T;
+    _list = (T*) malloc(sizeof(T)); // allocate memory 
+    memset(_list, 0, sizeof(T)); // initialize the new memory
     _list[0] = val; // put val at beginning
     _size++;
+    _beenMalloc = true;
   }
   // reallocate pointer
   else {
     _size++;
-    _list = (T*) realloc(_list, _size*sizeof(T)); // increase size
+    _list = (T*)realloc(_list, _size*sizeof(T)); // increase size
+    memset(_list+(_size-1), 0, sizeof(T)); // initialize the new space
     _list[_size - 1] = val;  // put val at end
   }
 }
@@ -74,47 +87,42 @@ void Array<T>::insert(int index, T val) {
 
 // remove an item at index
 template <typename T>
-void Array<T>::remove(int index) {
+T Array<T>::remove(int index) {
   // check index validity
   if (index < 0 || index >= _size) {
     throw "Invalid index";
   }
   
-  // create tmp array and copy
-  T tmp[_size - 1];
-  for (int i = 0; i < index; i++) {
-    tmp[i] = _list[i];
+  // store the index value
+  T store = _list[index];
+  // shift over each element to overwrite the index value
+  for (int i = index; i < _size - 1; i++) {
+    _list[i] = _list[i+1];
   }
-  // skip index
-  for (int i = index + 1; i < _size; i++) {
-    tmp[i-1] = _list[i];
-  }
-  
-  // delete the list and malloc it to appropriate size
+  // decrease the size
   _size--;
-  delete[]_list;
-  _list = (T*) malloc(_size*sizeof(T));
-  for (int i = 0; i < _size; i++) {
-    _list[i] = tmp[i];
-  }
+  _list = (T*)realloc(_list, _size*sizeof(T));
+  
+  return store;
 }
 
+// remove the last element of the array
 template <typename T>
-void Array<T>::replace(int index, T val) {
-  if (index < 0 || index > _size) {
-    throw "Invalid index";
+T Array<T>::pop() {
+  // can't pop an empty array
+  if (_size == 0) {
+    throw "Can't pop an empty array";
   }
-  else if (index == _size) {
-    add(val);
+  return remove(_size - 1);
+}
+
+// return the last element of the array
+template <typename T>
+T Array<T>::peek() {
+  if (_size == 0) {
+    throw "Can't peek at an empty array";
   }
-  else if (index < _size) {
-    _list[index] = val;
-  }
-  // else if (index > _size) {
-  //   _size = index + 1;
-  //   _list = (T*)realloc(_list, (_size)*(sizeof(T)));
-  //   _list[index] = val;
-  // }
+  return get(_size - 1);
 }
 
 // get an item at an index
@@ -126,6 +134,7 @@ T Array<T>::get(int index) {
   return _list[index];
 }
 
+// return number of stuff in the array
 template <typename T>
 int Array<T>::size() {
   return _size;
