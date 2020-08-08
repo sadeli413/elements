@@ -1,6 +1,5 @@
 #include "element.h"
-#include <string>
-using std::string;
+
 string lowercase(string); // prototype
 
 // default constructor

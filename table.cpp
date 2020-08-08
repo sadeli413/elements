@@ -1,13 +1,4 @@
-#include <iostream>
-#include <fstream>
-#include <string>
 #include "table.h"
-#include "array.h"
-using std::string;
-using std::ifstream;
-using std::cout;
-using std::endl;
-using std::cerr;
 
 Table::Table() {
     // temporary string holders
@@ -50,17 +41,17 @@ bool Table::checkWord(string word) {
     string substr; // substring of a word to check if it matches a periodic table symbol
     int found; // if the substring matches a periodic table symbol
     bool single = true; // if the substring length should be one (true) or two (false)
-    while (i < word.length() - 1) {
+    while (i < word.length()) {
         // check single
         substr = "";
         substr += word[i];
         
         // check a double if it doesn't go over the word length
-        if (!single && i + 1 < word.length() - 1) {
+        if (!single && i + 1 < word.length()) {
             substr += word[i+1];
         }
         // if single or proper double
-        if (single || (!single && i + 1 < word.length() - 1)) { 
+        if (single || (!single && i + 1 < word.length())) { 
             found = search(substr);
         }
         // otherwise, then I can't check double that goes over word length
@@ -91,7 +82,31 @@ bool Table::checkWord(string word) {
             single = false; // check double
         }
     }
+    cout << left << setw(20) << word;
+    printWord(flags, word.length());
+    cout << endl;
     return true;
+}
+
+void Table::printWord(Array<Flag> &flags, int length) {
+    if (flags.size() == 0) {
+        return;
+    }
+    // print out the symbol word
+    string symbol = "(";
+    for (int i = 0; i < flags.size(); i++) {
+        symbol += flags.get(i).getElement().getSym();
+    }
+    symbol += ")";
+    cout << left << setw(22) << symbol;
+    // print out the name with atomic number
+    string name = "";
+    int num = 0;
+    for (int i = 0; i < flags.size(); i++) {
+        name = flags.get(i).getElement().getName();
+        num = flags.get(i).getElement().getNum();
+        cout << name << "(" << num << ")" << " ";
+    }
 }
 
 // sort the table by type
