@@ -1,6 +1,6 @@
+// @author Thad Shinno
 #ifndef TABLE_H
 #define TABLE_H
-
 
 #include <iostream>
 #include <fstream>

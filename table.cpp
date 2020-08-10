@@ -1,3 +1,4 @@
+// @author Thad Shinno
 #include "table.h"
 
 Table::Table() {

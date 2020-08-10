@@ -1,3 +1,4 @@
+// @author Thad Shinno
 #include "flag.h"
 
 // default constructor

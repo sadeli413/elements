@@ -1,3 +1,4 @@
+// @author Thad Shinno
 #include "element.h"
 
 string lowercase(string); // prototype

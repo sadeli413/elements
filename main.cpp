@@ -1,3 +1,4 @@
+// @author Thad Shinno
 #include <iostream>
 #include <string>
 #include <fstream>
